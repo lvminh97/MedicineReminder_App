@@ -5,17 +5,17 @@ import 'package:medicine_reminder/view/widget/MyDrawer.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Schedule extends StatefulWidget {
+  const Schedule({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return HomeState();
+    return ScheduleState();
   }
 
 }
 
-class HomeState extends State<StatefulWidget> {
+class ScheduleState extends State<StatefulWidget> {
 
   bool needUpdateTime = false;
   ValueNotifier<String> currentTime = ValueNotifier<String>("");
@@ -33,7 +33,7 @@ class HomeState extends State<StatefulWidget> {
       canPop: false,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Home"),
+          title: const Text("Schedule"),
         ),
         body: DecoratedBox(
           decoration: const BoxDecoration(
@@ -56,7 +56,7 @@ class HomeState extends State<StatefulWidget> {
             ),
           ),
         ),
-        drawer: MyDrawer(DrawerSelection.home),
+        drawer: MyDrawer(DrawerSelection.schedule),
       ),
     );
   }
