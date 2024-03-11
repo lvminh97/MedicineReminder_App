@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:medicine_reminder/view/widget/MyDrawer.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 
@@ -31,6 +32,9 @@ class HomeState extends State<StatefulWidget> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Home"),
+        ),
         body: DecoratedBox(
           decoration: const BoxDecoration(
             color: Colors.white54
@@ -51,7 +55,8 @@ class HomeState extends State<StatefulWidget> {
               ),
             ),
           ),
-        )
+        ),
+        drawer: MyDrawer(DrawerSelection.home),
       ),
     );
   }
