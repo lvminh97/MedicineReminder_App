@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:medicine_reminder/view/widget/MyDrawer.dart';
+import 'package:medicine_reminder/view/widget/ScheduleItem.dart';
 import 'package:sizer/sizer.dart';
-import 'package:intl/intl.dart';
 
 class Schedule extends StatefulWidget {
   const Schedule({super.key});
@@ -17,14 +17,33 @@ class Schedule extends StatefulWidget {
 
 class ScheduleState extends State<StatefulWidget> {
 
-  bool needUpdateTime = false;
-  ValueNotifier<String> currentTime = ValueNotifier<String>("");
+  List<ScheduleItem> schedules = [];
 
   @override
   void initState() {
     super.initState();
-    needUpdateTime = true;
-    updateTime();
+    schedules = [
+      ScheduleItem(
+        time: "07:30",
+        typeA: 4,
+        typeB: 3,
+      ),
+      ScheduleItem(
+        time: "09:45",
+        typeA: 3,
+        typeB: 1,
+      ),
+      ScheduleItem(
+        time: "11:20",
+        typeA: 2,
+        typeB: 5,
+      ),
+      ScheduleItem(
+        time: "17:00",
+        typeA: 6,
+        typeB: 2,
+      )
+    ];
   }
 
   @override
@@ -33,46 +52,32 @@ class ScheduleState extends State<StatefulWidget> {
       canPop: false,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Schedule"),
+          centerTitle: true,
+          title: const Text(
+            "Schedule list",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         body: DecoratedBox(
           decoration: const BoxDecoration(
             color: Colors.white54
           ),
           child: Container(
-            width: 100.w,
+            margin: EdgeInsets.fromLTRB(5.w, 5.h, 5.w, 10.h),
+            width: 90.w,
             height: 100.h,
             alignment: Alignment.center,
-            child: ValueListenableBuilder(
-              valueListenable: currentTime,
-              builder: (context, value, child) => Text(
-                "Current time is: ${currentTime.value}",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-            ),
+            child: ListView.builder(
+              itemCount: schedules.length,
+              itemBuilder: (context, index) => schedules[index],
+            )
           ),
         ),
         drawer: MyDrawer(DrawerSelection.schedule),
       ),
     );
-  }
-
-  void updateTime() {
-    Future.doWhile(() async {
-      if(!needUpdateTime) {
-        return false;
-      } 
-      else {
-        DateTime now = DateTime.now();
-        currentTime.value = DateFormat("kk:mm:ss").format(now);
-        await Future.delayed(const Duration(seconds: 1));
-        return true;
-      }
-    });
   }
 
 }

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:medicine_reminder/view/Home.dart';
 import 'package:medicine_reminder/view/Schedule.dart';
 import 'package:medicine_reminder/view/Splash.dart';
+import 'package:medicine_reminder/view/Time.dart';
 
 class MyRoutes {
   static final Map<String, Widget Function(BuildContext)> _routes = {
     RoutesName.splash: (context) => const Splash(),
     RoutesName.home: (context) => const Home(),
-    RoutesName.schedule: (context) => const Schedule()
+    RoutesName.schedule: (context) => const Schedule(),
+    RoutesName.time: (context) => const Time(),
   };
   static const String _init = RoutesName.splash;
 
@@ -24,4 +26,5 @@ class RoutesName {
   static const String splash = "/splash";
   static const String home = "/home";
   static const String schedule = "/schedule";
+  static const String time = "/time";
 }

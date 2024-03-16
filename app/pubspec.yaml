@@ -15,6 +15,9 @@ dependencies:
   sizer: ^2.0.15
   fluttertoast: ^8.2.2
   intl: ^0.19.0
+  firebase_core: ^2.27.0
+  firebase_database: ^10.4.9
+  firebase_auth: ^4.17.8
 
 
 dev_dependencies:

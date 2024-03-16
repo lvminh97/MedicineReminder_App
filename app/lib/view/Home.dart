@@ -33,7 +33,13 @@ class HomeState extends State<StatefulWidget> {
       canPop: false,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Home"),
+          centerTitle: true,
+          title: const Text(
+            "Home",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         body: DecoratedBox(
           decoration: const BoxDecoration(
@@ -68,7 +74,7 @@ class HomeState extends State<StatefulWidget> {
       } 
       else {
         DateTime now = DateTime.now();
-        currentTime.value = DateFormat("kk:mm:ss").format(now);
+        currentTime.value = DateFormat("HH:mm:ss").format(now);
         await Future.delayed(const Duration(seconds: 1));
         return true;
       }

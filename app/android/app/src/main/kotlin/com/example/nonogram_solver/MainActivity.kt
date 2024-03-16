@@ -1,4 +1,4 @@
-package com.minhlv.medicinereminder_solver
+package com.minhlv.medicinereminder
 
 import io.flutter.embedding.android.FlutterActivity
 

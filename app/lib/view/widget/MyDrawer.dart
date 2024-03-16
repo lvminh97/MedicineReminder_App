@@ -17,6 +17,9 @@ class MyDrawer extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero
+      ),
       child: ListView(
         padding: const EdgeInsets.only(top: 0),
         children: [
@@ -52,7 +55,7 @@ class MyDrawer extends StatelessWidget{
           ListTile(
             selected: _drawerSelection == DrawerSelection.schedule,
             selectedColor: Colors.blueAccent,
-            title: const Text("Schedule"),
+            title: const Text("Schedule list"),
             leading: Icon(Icons.list, size: 20.sp),
             onTap: () {
               if(_drawerSelection != DrawerSelection.schedule){
@@ -66,11 +69,11 @@ class MyDrawer extends StatelessWidget{
           ListTile(
             selected: _drawerSelection == DrawerSelection.time,
             selectedColor: Colors.blueAccent,
-            title: const Text("Time"),
+            title: const Text("Time setting"),
             leading: Icon(Icons.timer, size: 20.sp),
             onTap: () {
               if(_drawerSelection != DrawerSelection.time){
-                
+                Navigator.pushNamedAndRemoveUntil(context, RoutesName.time, (route) => false);
               }
               else {
                 Navigator.pop(context);

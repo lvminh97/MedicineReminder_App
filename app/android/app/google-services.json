@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "708972629160",
+    "firebase_url": "https://medicineremind-2ded0-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "medicineremind-2ded0",
+    "storage_bucket": "medicineremind-2ded0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708972629160:android:ef5c5f86a22400042f869d",
+        "android_client_info": {
+          "package_name": "com.minhlv.medicinereminder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaZ3Uzjnm7cowFa786c4aXegpZy5cl0N0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
