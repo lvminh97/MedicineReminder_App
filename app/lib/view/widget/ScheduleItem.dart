@@ -5,15 +5,11 @@ import 'package:sizer/sizer.dart';
 
 class ScheduleItem extends StatelessWidget {
 
-  String _time = "";
-  int _typeA = 0;
-  int _typeB = 0;
+  String time = "";
+  int typeA = 0;
+  int typeB = 0;
 
-  ScheduleItem({Key? key, String time = "", int typeA = 0, int typeB = 0}) : super(key: key) {
-    _time = time;
-    _typeA = typeA;
-    _typeB = typeB;
-  }
+  ScheduleItem({Key? key, this.time = "", this.typeA = 0, this.typeB = 0}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +32,7 @@ class ScheduleItem extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 0.5.h),
                   width: 55.w,
                   child: Text(
-                    _time,
+                    time,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -52,7 +48,7 @@ class ScheduleItem extends StatelessWidget {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          "Type A: ${_typeA.toString()}",
+                          "Type A: ${typeA.toString()}",
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.white
@@ -62,7 +58,7 @@ class ScheduleItem extends StatelessWidget {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          "Type B: ${_typeB.toString()}",
+                          "Type B: ${typeB.toString()}",
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.white
