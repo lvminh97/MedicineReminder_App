@@ -20,7 +20,6 @@ class Schedule extends StatefulWidget {
 class ScheduleState extends State<StatefulWidget> {
 
   List<ScheduleItem> scheduleList = [];
-  Map<String, ScheduleItem> scheduleMap = {};
   ValueNotifier<int> scheduleSizeNtf = ValueNotifier(0);
   late DatabaseReference scheduleSizeRef, scheduleDataRef; 
 
@@ -31,18 +30,17 @@ class ScheduleState extends State<StatefulWidget> {
     scheduleDataRef = FirebaseDatabase.instance.ref("medicine/schedule/data");
     scheduleDataRef.onValue.listen((event) async {
       scheduleList = [];
-      scheduleMap = {};
       var schData = (await scheduleDataRef.get()).value as Map;
       for(String key in schData.keys) {
         var schRef = FirebaseDatabase.instance.ref("medicine/schedule/data/$key");
         var schMap = (await schRef.get()).value as Map;
         var schedule = ScheduleItem(
+          id: key,
           time: schMap["time"],
           typeA: schMap["type_a"],
           typeB: schMap["type_b"]
         );
         scheduleList.add(schedule);
-        scheduleMap[key] = schedule;
         scheduleList.sort((a, b) => a.time.compareTo(b.time));
       }
       scheduleSizeNtf.value = scheduleList.length;

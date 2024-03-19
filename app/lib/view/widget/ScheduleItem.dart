@@ -1,15 +1,19 @@
-// ignore_for_file: file_names, must_be_immutable
+// ignore_for_file: file_names, must_be_immutable, use_build_context_synchronously
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:medicine_reminder/routes.dart';
 import 'package:sizer/sizer.dart';
 
 class ScheduleItem extends StatelessWidget {
 
+  String id = "";
   String time = "";
   int typeA = 0;
   int typeB = 0;
 
-  ScheduleItem({Key? key, this.time = "", this.typeA = 0, this.typeB = 0}) : super(key: key);
+  ScheduleItem({Key? key, this.id = "", this.time = "", this.typeA = 0, this.typeB = 0}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +80,9 @@ class ScheduleItem extends StatelessWidget {
             width: 12.w,
             child: TextButton(
               onPressed: () {
-                
+                Navigator.pushNamedAndRemoveUntil(context, RoutesName.editSchedule, (route) => false, arguments: {
+                  "schedule": this
+                });
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.orangeAccent),
@@ -92,7 +98,47 @@ class ScheduleItem extends StatelessWidget {
             width: 12.w,
             child: TextButton(
               onPressed: () async {
-                
+                await showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    content: Text(
+                      "Do you want to delete this schedule?",
+                      style: TextStyle(
+                        fontSize: 16.sp
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey
+                          ),
+                        )
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          var schRef = FirebaseDatabase.instance.ref("medicine/schedule/data/$id");
+                          await schRef.remove();
+                          Navigator.pop(context);
+                          Fluttertoast.showToast(msg: "Delete the schedule successful");
+                        },
+                        child: const Text(
+                          "Delete",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.lightBlueAccent
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                );
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.red),
