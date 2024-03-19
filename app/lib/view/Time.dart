@@ -18,21 +18,17 @@ class Time extends StatefulWidget {
 
 class TimeState extends State<StatefulWidget> {
 
-  List<TextEditingController> timeEditControllers = [];
+  ValueNotifier<String> timeNtf = ValueNotifier("00:00:00");
+  ValueNotifier<String> dateNtf = ValueNotifier("01/01/2024");
 
   @override
   void initState() {
     super.initState();
-    for(int i = 0; i < 6; i++) {
-      timeEditControllers.add(TextEditingController());
-    }
 
-    // FirebaseAuth.instance.signInWithEmailAndPassword(email: "medicine@mail.com", password: "12345678");
-    var cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
-    cmdRef.onValue.listen((event) {
-      String cmd = event.snapshot.value.toString();
-      print("Receive command: $cmd");
-    });
+    // var cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
+    // cmdRef.onValue.listen((event) {
+    //   // String cmd = event.snapshot.value.toString();
+    // });
   }
 
   @override
@@ -65,304 +61,96 @@ class TimeState extends State<StatefulWidget> {
                   children: [
                     Container(
                       margin: EdgeInsets.only(right: 2.w),
-                      width: 20.w,
-                      child: Text(
-                        "Time",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Colors.black
+                      width: 65.w,
+                      child: ValueListenableBuilder(
+                        valueListenable: timeNtf,
+                        builder: (context, value, child) => Text(
+                          "Time:      ${timeNtf.value}",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            color: Colors.black
+                          ),
                         ),
                       ),
                     ),
-                    Container(
-                      width: 20.w,
-                      height: 6.h,
-                      alignment: Alignment.center,
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        maxLength: 2,
-                        controller: timeEditControllers[0],
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3.h),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 5.0,
-                              color: Colors.grey
-                            )
+                    SizedBox(
+                      width: 15.w,
+                      height: 15.w,
+                      child: TextButton(
+                        onPressed: () {
+                          showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+                            initialEntryMode: TimePickerEntryMode.input
+                          )
+                          .then((time) {
+                            String s = "${time!.hour.toString().padLeft(2, "0")}:${time.minute.toString().padLeft(2, "0")}:00";
+                            timeNtf.value = s;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.all(1.w)
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Icon(
+                            Icons.alarm,
+                            size: 30.sp,
                           ),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 2.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          counterStyle: const TextStyle(height: double.minPositive),
-                          counterText: "",
-                          hintText: "00"
                         ),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                          color: Colors.black
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Container(
-                      width: 3.w,
-                      alignment: Alignment.center,
-                      child: Text(
-                        ":",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.sp,
-                          color: Colors.black
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 20.w,
-                      height: 6.h,
-                      alignment: Alignment.center,
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        maxLength: 2,
-                        controller: timeEditControllers[1],
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3.h),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 5.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 2.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          counterStyle: const TextStyle(height: double.minPositive),
-                          counterText: "",
-                          hintText: "00"
-                        ),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                          color: Colors.black
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Container(
-                      width: 3.w,
-                      alignment: Alignment.center,
-                      child: Text(
-                        ":",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.sp,
-                          color: Colors.black
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 20.w,
-                      height: 6.h,
-                      alignment: Alignment.center,
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        maxLength: 2,
-                        controller: timeEditControllers[2],
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3.h),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 5.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 2.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          counterStyle: const TextStyle(height: double.minPositive),
-                          counterText: "",
-                          hintText: "00"
-                        ),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                          color: Colors.black
-                        ),
-                        textAlign: TextAlign.center,
                       ),
                     )
                   ],
                 ),
-                SizedBox(height: 3.h),
+                SizedBox(height: 4.h),
                 Row(
                   children: [
                     Container(
                       margin: EdgeInsets.only(right: 2.w),
-                      width: 20.w,
-                      child: Text(
-                        "Date",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Colors.black
+                      width: 65.w,
+                      child: ValueListenableBuilder(
+                        valueListenable: dateNtf,
+                        builder: (context, value, child) => Text(
+                          "Date:      ${dateNtf.value}",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            color: Colors.black
+                          ),
                         ),
                       ),
                     ),
-                    Container(
-                      width: 20.w,
-                      height: 6.h,
-                      alignment: Alignment.center,
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        maxLength: 2,
-                        controller: timeEditControllers[3],
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3.h),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 5.0,
-                              color: Colors.grey
-                            )
+                    SizedBox(
+                      width: 15.w,
+                      height: 15.w,
+                      child: TextButton(
+                        onPressed: () {
+                          showDatePicker(
+                            context: context,
+                            firstDate: DateTime.parse("1990-01-01"),
+                            lastDate: DateTime.parse("2030-12-31"),
+                            initialDate: DateTime.now(),
+                            initialEntryMode: DatePickerEntryMode.calendar
+                          )
+                          .then((date) {
+                            String s = "${date!.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year.toString().padLeft(4, "0")}";
+                            dateNtf.value = s;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.all(1.w)
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Icon(
+                            Icons.calendar_month,
+                            size: 30.sp,
                           ),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 2.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          counterStyle: const TextStyle(height: double.minPositive),
-                          counterText: "",
-                          hintText: "00"
                         ),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                          color: Colors.black
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Container(
-                      width: 3.w,
-                      alignment: Alignment.center,
-                      child: Text(
-                        "/",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.sp,
-                          color: Colors.black
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 20.w,
-                      height: 6.h,
-                      alignment: Alignment.center,
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        maxLength: 2,
-                        controller: timeEditControllers[4],
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3.h),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 5.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 2.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          counterStyle: const TextStyle(height: double.minPositive),
-                          counterText: "",
-                          hintText: "00"
-                        ),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                          color: Colors.black
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Container(
-                      width: 3.w,
-                      alignment: Alignment.center,
-                      child: Text(
-                        "/",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.sp,
-                          color: Colors.black
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 20.w,
-                      height: 6.h,
-                      alignment: Alignment.center,
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        maxLength: 4,
-                        controller: timeEditControllers[5],
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3.h),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 5.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              style: BorderStyle.solid,
-                              width: 2.0,
-                              color: Colors.grey
-                            )
-                          ),
-                          counterStyle: const TextStyle(height: double.minPositive),
-                          counterText: "",
-                          hintText: "0000"
-                        ),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                          color: Colors.black
-                        ),
-                        textAlign: TextAlign.center,
                       ),
                     )
                   ],
                 ),
-                SizedBox(height: 5.h),
+                SizedBox(height: 8.h),
                 SizedBox(
                   width: 60.w,
                   child: TextButton(
@@ -370,8 +158,7 @@ class TimeState extends State<StatefulWidget> {
                       var cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
                       cmdRef.ref.set("set_rtc");
                       var cmdValueRef = FirebaseDatabase.instance.ref("medicine/command/value");
-                      String timeValue = "${timeEditControllers[0].text}:${timeEditControllers[1].text}:${timeEditControllers[2].text}";
-                      timeValue += " ${timeEditControllers[3].text}/${timeEditControllers[4].text}/${timeEditControllers[5].text}";
+                      String timeValue = "${timeNtf.value} ${dateNtf.value}";
                       cmdValueRef.set(timeValue);
                       Fluttertoast.showToast(msg: "Set time successfull");
                     },
@@ -382,8 +169,8 @@ class TimeState extends State<StatefulWidget> {
                     child: Text(
                       "Set",
                       style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.black
+                        fontSize: 16.sp,
+                        color: Colors.white
                       ),
                     ),
                   ),
