@@ -19,6 +19,7 @@ dependencies:
   firebase_database: ^10.4.9
   firebase_auth: ^4.17.8
   uuid: ^4.4.0
+  flutter_launcher_icons: ^0.13.1
 
 
 dev_dependencies:
@@ -27,5 +28,13 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
 
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icon.png"
+
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
