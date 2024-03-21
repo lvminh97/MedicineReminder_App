@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, must_be_immutable, use_build_context_synchronously
+// ignore_for_file: file_names, must_be_immutable, use_build_context_synchronously, empty_catches
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +8,14 @@ import 'package:sizer/sizer.dart';
 
 class ScheduleItem extends StatelessWidget {
 
-  String id = "";
+  BuildContext? parentContext;
+
+  int id = 0;
   String time = "";
   int typeA = 0;
   int typeB = 0;
 
-  ScheduleItem({Key? key, this.id = "", this.time = "", this.typeA = 0, this.typeB = 0}) : super(key: key);
+  ScheduleItem({Key? key, this.id = 0, this.time = "", this.typeA = 0, this.typeB = 0, this.parentContext}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +112,7 @@ class ScheduleItem extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(parentContext!);
                         },
                         child: Text(
                           "Cancel",
@@ -124,7 +126,12 @@ class ScheduleItem extends StatelessWidget {
                         onPressed: () async {
                           var schRef = FirebaseDatabase.instance.ref("medicine/schedule/data/$id");
                           await schRef.remove();
-                          Navigator.pop(context);
+                          var sizeRef = FirebaseDatabase.instance.ref("medicine/schedule/size");
+                          int size = (await sizeRef.get()).value as int;
+                          await sizeRef.set(size - 1);
+                          var cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
+                          await cmdRef.set("delete");
+                          Navigator.pop(parentContext!);
                           Fluttertoast.showToast(msg: "Delete the schedule successful");
                         },
                         child: const Text(

@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medicine_reminder/routes.dart';
 import 'package:medicine_reminder/view/widget/MyDrawer.dart';
 import 'package:sizer/sizer.dart';
-import 'package:uuid/uuid.dart';
 
 class AddSchedule extends StatefulWidget {
   const AddSchedule({super.key});
@@ -159,13 +158,18 @@ class AddScheduleState extends State<StatefulWidget> {
                 SizedBox(
                   width: 80.w,
                   child: TextButton(
-                    onPressed: () {
-                      var schRef = FirebaseDatabase.instance.ref("medicine/schedule/data/${const Uuid().v4()}");
-                      schRef.set({
+                    onPressed: () async {
+                      var sizeRef = FirebaseDatabase.instance.ref("medicine/schedule/size");
+                      int size = (await sizeRef.get()).value as int;
+                      var schRef = FirebaseDatabase.instance.ref("medicine/schedule/data/$size");
+                      await schRef.set({
                         "time": timeNtf.value,
                         "type_a": typeANtf.value.floor(),
                         "type_b": typeBNtf.value.floor()
                       });
+                      await sizeRef.set(size + 1);
+                      var cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
+                      await cmdRef.set("add");                    
                       Fluttertoast.showToast(msg: "Add new schedule successful");
                       Navigator.pushNamedAndRemoveUntil(context, RoutesName.schedule, (route) => false);
                     },

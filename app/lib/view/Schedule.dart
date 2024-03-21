@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -30,18 +30,16 @@ class ScheduleState extends State<StatefulWidget> {
     scheduleDataRef = FirebaseDatabase.instance.ref("medicine/schedule/data");
     scheduleDataRef.onValue.listen((event) async {
       scheduleList = [];
-      var schData = (await scheduleDataRef.get()).value as Map;
-      for(String key in schData.keys) {
-        var schRef = FirebaseDatabase.instance.ref("medicine/schedule/data/$key");
-        var schMap = (await schRef.get()).value as Map;
+      var schData = ((await scheduleDataRef.get()).value ?? []) as List;
+      for(int i = 0; i < schData.length; i++) {
         var schedule = ScheduleItem(
-          id: key,
-          time: schMap["time"],
-          typeA: schMap["type_a"],
-          typeB: schMap["type_b"]
+          id: i,
+          time: schData[i]["time"],
+          typeA: schData[i]["type_a"],
+          typeB: schData[i]["type_b"],
+          parentContext: context,
         );
         scheduleList.add(schedule);
-        scheduleList.sort((a, b) => a.time.compareTo(b.time));
       }
       scheduleSizeNtf.value = scheduleList.length;
     });

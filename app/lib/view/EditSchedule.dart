@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -166,14 +166,16 @@ class EditScheduleState extends State<StatefulWidget> {
                 SizedBox(
                   width: 80.w,
                   child: TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       var schRef = FirebaseDatabase.instance.ref("medicine/schedule/data/${schedule!.id}");
-                      schRef.set({
+                      await schRef.set({
                         "time": timeNtf.value,
                         "type_a": typeANtf.value.floor(),
                         "type_b": typeBNtf.value.floor()
                       });
-                      Fluttertoast.showToast(msg: "Add new schedule successful");
+                      var cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
+                      await cmdRef.set("edit");
+                      Fluttertoast.showToast(msg: "Update schedule successful");
                       Navigator.pushNamedAndRemoveUntil(context, RoutesName.schedule, (route) => false);
                     },
                     style: TextButton.styleFrom(
