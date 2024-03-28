@@ -39,6 +39,9 @@ class EditScheduleState extends State<StatefulWidget> {
 
     return PopScope(
       canPop: false,
+      onPopInvoked: (didPop) {
+        Navigator.pushNamedAndRemoveUntil(context, RoutesName.schedule, (route) => false);
+      },
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,

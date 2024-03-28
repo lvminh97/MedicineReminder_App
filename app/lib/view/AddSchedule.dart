@@ -31,6 +31,9 @@ class AddScheduleState extends State<StatefulWidget> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
+      onPopInvoked: (didPop) {
+        Navigator.pushNamedAndRemoveUntil(context, RoutesName.schedule, (route) => false);
+      },
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,

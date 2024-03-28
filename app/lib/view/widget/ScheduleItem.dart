@@ -124,13 +124,37 @@ class ScheduleItem extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () async {
+                          List<ScheduleItem> scheduleList = [];
+                          var scheduleDataRef = FirebaseDatabase.instance.ref("medicine/schedule/data");
+                          var schData = ((await scheduleDataRef.get()).value ?? []) as List;
+                          for(int i = 0; i < schData.length; i++) {
+                            var schedule = ScheduleItem(
+                              id: i,
+                              time: schData[i]["time"],
+                              typeA: schData[i]["type_a"],
+                              typeB: schData[i]["type_b"],
+                              parentContext: context,
+                            );
+                            scheduleList.add(schedule);
+                          }
                           var schRef = FirebaseDatabase.instance.ref("medicine/schedule/data/$id");
                           await schRef.remove();
+                          // arrange the array                          
+                          scheduleList.removeAt(id);
+                          await FirebaseDatabase.instance.ref("medicine/schedule/data").set({});
+                          for(int i = 0; i < scheduleList.length; i++) {
+                            await FirebaseDatabase.instance.ref("medicine/schedule/data/$i").set({
+                              "time": scheduleList[i].time,
+                              "type_a": scheduleList[i].typeA,
+                              "type_b": scheduleList[i].typeB
+                            });
+                          }  
                           var sizeRef = FirebaseDatabase.instance.ref("medicine/schedule/size");
                           int size = (await sizeRef.get()).value as int;
                           await sizeRef.set(size - 1);
                           var cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
                           await cmdRef.set("delete");
+
                           Navigator.pop(parentContext!);
                           Fluttertoast.showToast(msg: "Delete the schedule successful");
                         },
