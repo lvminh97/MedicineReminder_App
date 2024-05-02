@@ -39,10 +39,14 @@ void setup(){
   Serial.begin(115200);
   delay(500);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+#if DEBUG  
   Serial.print("Connecting to Wi-Fi");
+#endif  
   int connectTmout = 0;
   while (WiFi.status() != WL_CONNECTED){
+#if DEBUG    
     Serial.print(".");
+#endif
     delay(300);
     connectTmout++;
     if(connectTmout == 10) {
@@ -50,10 +54,15 @@ void setup(){
       WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     }
   }
+#if DEBUG  
   Serial.println();
   Serial.print("Connected with IP: ");
   Serial.println(WiFi.localIP());
   Serial.println();
+#endif
+  outBuff[0] = 0x83;
+  outBuff[1] = 0x80;
+  sendCommand((char*) outBuff, 2);  
 
   config.api_key = API_KEY;
   config.database_url = DATABASE_URL;
@@ -72,14 +81,37 @@ void loop(){
   if (millis() - sendDataPrevMillis > 1500){
     Firebase.RTDB.getString(&fbdo, F("medicine/command/cmd"));
     String cmd = fbdo.to<String>();
+
     if(cmd == "set_rtc") {
-      setRTC();
+      getRTC();
     }
     else if(cmd == "add" || cmd == "edit" || cmd == "delete") {
       getScheduleList();
       Firebase.RTDB.setString(&fbdo, F("medicine/command/cmd"), F(" "));
     }
     sendDataPrevMillis = millis();
+  }
+}
+
+void setScheduleList() {
+  Firebase.RTDB.setInt(&fbdo, F("medicine/schedule/size"), scheduleSize);
+  delay(50);
+  Firebase.RTDB.deleteNode(&fbdo, F("medicine/schedule/data"));
+  delay(50);
+  for(int i = 0; i < scheduleSize; i++) {
+    String timestr = "";
+    if(scheduleList[i].hour < 10)
+      timestr += "0";
+    timestr += String(scheduleList[i].hour) + ":";
+    if(scheduleList[i].minute < 10)
+      timestr += "0";
+    timestr += String(scheduleList[i].minute);
+    Firebase.RTDB.setString(&fbdo, F("medicine/schedule/data/") + String(i) + F("/time"), timestr);
+    delay(50);
+    Firebase.RTDB.setInt(&fbdo, F("medicine/schedule/data/") + String(i) + F("/type_a"), scheduleList[i].type & 0x0F);
+    delay(50);
+    Firebase.RTDB.setInt(&fbdo, F("medicine/schedule/data/") + String(i) + F("/type_b"), (scheduleList[i].type >> 4) & 0x0F);
+    delay(50);
   }
 }
 
@@ -115,7 +147,7 @@ void getScheduleList() {
   sendCommand(outBuff, 3 * scheduleSize + 1);
 }
 
-void setRTC() {
+void getRTC() {
   Firebase.RTDB.getString(&fbdo, F("medicine/command/value"));
   String timestr = fbdo.to<String>();
   outBuff[1] = 10 * (timestr[0] - '0') + (timestr[1] - '0');
@@ -195,7 +227,17 @@ void processCommand(){
 #elif defined(ESP32)
           ESP.restart();
 #endif
+          
         }
+        break;
+      case 0x82:  // receive the schedule from STM32
+        scheduleSize = inBuff[3];
+        for(int i = 0; i < scheduleSize; i++) {
+          scheduleList[i].hour = inBuff[3 * i + 4];
+          scheduleList[i].minute = inBuff[3 * i + 5];
+          scheduleList[i].type = inBuff[3 * i + 6];
+        }
+        setScheduleList();
         break;
     }
   }
