@@ -144,7 +144,7 @@ void getScheduleList() {
   }
   outBuff[0] = 0x82;
   outBuff[1] = scheduleSize;
-  sendCommand(outBuff, 3 * scheduleSize + 1);
+  sendCommand(outBuff, 3 * scheduleSize + 2);
 }
 
 void getRTC() {
