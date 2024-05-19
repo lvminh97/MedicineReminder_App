@@ -49,16 +49,44 @@ class HomeState extends State<StatefulWidget> {
             width: 100.w,
             height: 100.h,
             alignment: Alignment.center,
-            child: ValueListenableBuilder(
-              valueListenable: currentTime,
-              builder: (context, value, child) => Text(
-                "Current time is: ${currentTime.value}",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold
+            child: Column(
+              children: [
+                SizedBox(height: 20.h),
+                SizedBox(
+                  height: 15.h,
+                  child: const Image(
+                    image: AssetImage("assets/icon.png"),
+                  ),
                 ),
-              ),
+                SizedBox(height: 3.h),
+                SizedBox(
+                  height: 10.h,
+                  child: FittedBox(
+                    fit: BoxFit.fitHeight,
+                    child: Text(
+                      "Automatic Pill Dispenser \nwith Alarm",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 25.sp,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                ValueListenableBuilder(
+                  valueListenable: currentTime,
+                  builder: (context, value, child) => Text(
+                    "Current time is: ${currentTime.value}",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
