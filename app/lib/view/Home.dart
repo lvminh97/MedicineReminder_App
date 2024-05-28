@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:medicine_reminder/view/widget/MyDrawer.dart';
 import 'package:sizer/sizer.dart';
@@ -19,12 +20,19 @@ class HomeState extends State<StatefulWidget> {
 
   bool needUpdateTime = false;
   ValueNotifier<String> currentTime = ValueNotifier<String>("");
+  ValueNotifier<int> deviceStatusNtf = ValueNotifier(0);
+  int deviceStatus = 0;
+
+  late DatabaseReference deviceStatusRef;
+  int waitingTimer = 0;
 
   @override
   void initState() {
     super.initState();
     needUpdateTime = true;
+    deviceStatusListener();
     updateTime();
+    getDeviceStatus();
   }
 
   @override
@@ -51,7 +59,7 @@ class HomeState extends State<StatefulWidget> {
             alignment: Alignment.center,
             child: Column(
               children: [
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 SizedBox(
                   height: 15.h,
                   child: const Image(
@@ -86,6 +94,57 @@ class HomeState extends State<StatefulWidget> {
                     ),
                   ),
                 ),
+                SizedBox(height: 5.h),
+                Row(
+                  children: [
+                    SizedBox(width: 8.w),
+                    SizedBox(
+                      width: 40.w,
+                      child: Text(
+                        "Device status: ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14.sp,
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      width: 32.w,
+                      child: ValueListenableBuilder(
+                        valueListenable: currentTime,
+                        builder: (context, value, child) => Text(
+                          deviceStatusNtf.value == 2 ? "Syncing..." : deviceStatusNtf.value == 1 ? "Online" : "Offline",
+                          style: TextStyle(
+                            color: deviceStatusNtf.value == 2 ? Colors.grey : deviceStatusNtf.value == 1 ? Colors.greenAccent : Colors.red,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 12.w,
+                      height: 12.w,
+                      child: TextButton(
+                        onPressed: () async {
+                          getDeviceStatus();
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.green
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Icon(
+                            Icons.refresh,
+                            size: 40.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.w)
+                  ],
+                )
               ],
             ),
           ),
@@ -107,6 +166,39 @@ class HomeState extends State<StatefulWidget> {
         return true;
       }
     });
+  }
+
+  void deviceStatusListener() async {
+    deviceStatusRef = FirebaseDatabase.instance.ref("medicine/status");
+    deviceStatusRef.onValue.listen((event) async {
+      deviceStatus = (event.snapshot.value ?? 0) as int;
+      if(waitingTimer == 0) {
+        deviceStatusNtf.value = deviceStatus;
+      }
+      else if(deviceStatus == 1) {
+        waitingTimer = 1;
+      }
+    });
+
+    Future.doWhile(() async {
+      if(waitingTimer > 0) {
+        waitingTimer--;
+        if(waitingTimer == 0) {
+          deviceStatusNtf.value = deviceStatus;
+          await FirebaseDatabase.instance.ref("medicine/command/cmd").set(" ");
+        }
+      }
+      await Future.delayed(const Duration(seconds: 1));
+      return true;
+    });
+  }
+
+  void getDeviceStatus() async {
+    DatabaseReference cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
+    await cmdRef.set("device_status");
+    await deviceStatusRef.set(0);
+    waitingTimer = 10;
+    deviceStatusNtf.value = 2;
   }
 
 }

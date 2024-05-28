@@ -23,7 +23,7 @@ class ScheduleItem extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 1.h),
       padding: EdgeInsets.only(left: 2.w, top: 1.h, right: 2.w, bottom: 1.h),
       width: 100.w,
-      height: 10.h,
+      height: 12.h,
       decoration: BoxDecoration(
         color: Colors.lightBlueAccent,
         borderRadius: BorderRadius.circular(2.w)
@@ -36,42 +36,36 @@ class ScheduleItem extends StatelessWidget {
               children: [
                 Container(
                   margin: EdgeInsets.only(bottom: 0.5.h),
+                  alignment: Alignment.centerLeft,
                   width: 55.w,
-                  child: Text(
-                    time,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.sp,
-                      color: Colors.white
+                  height: 5.h,
+                  child: FittedBox(
+                    fit: BoxFit.fitHeight,
+                    child: Text(
+                      time,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.sp,
+                        color: Colors.white
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(
+                Container(
                   width: 55.w,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          "Type A: ${typeA.toString()}",
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.white
-                          ),
-                        )
+                  height: 3.5.h,
+                  alignment: Alignment.centerLeft,
+                  child: FittedBox(
+                    fit: BoxFit.fitHeight,
+                    child: Text(
+                      "Type A: ${typeA.toString()}     Type B: ${typeB.toString()}",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.white
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          "Type B: ${typeB.toString()}",
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.white
-                          ),
-                        )
-                      )
-                    ],
+                    ),
                   ),
                 )
               ]

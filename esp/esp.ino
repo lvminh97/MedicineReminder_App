@@ -89,6 +89,10 @@ void loop(){
       getScheduleList();
       Firebase.RTDB.setString(&fbdo, F("medicine/command/cmd"), F(" "));
     }
+    else if(cmd == "device_status") {
+      Firebase.RTDB.setInt(&fbdo, F("medicine/status"), 1);
+      Firebase.RTDB.setString(&fbdo, F("medicine/command/cmd"), F(" "));
+    }
     sendDataPrevMillis = millis();
   }
 }
