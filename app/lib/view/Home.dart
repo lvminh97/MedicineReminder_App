@@ -24,6 +24,7 @@ class HomeState extends State<StatefulWidget> {
   int deviceStatus = 0;
 
   late DatabaseReference deviceStatusRef;
+  late DatabaseReference cmdRef;
   int waitingTimer = 0;
 
   @override
@@ -31,6 +32,7 @@ class HomeState extends State<StatefulWidget> {
     super.initState();
     needUpdateTime = true;
     deviceStatusListener();
+    comingListener();
     updateTime();
     getDeviceStatus();
   }
@@ -190,6 +192,51 @@ class HomeState extends State<StatefulWidget> {
       }
       await Future.delayed(const Duration(seconds: 1));
       return true;
+    });
+  }
+
+  void comingListener() async {
+    cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
+    cmdRef.onValue.listen((event) async {
+      String cmd = event.snapshot.value as String;
+      await cmdRef.set(" ");
+      String cmdValue = (await FirebaseDatabase.instance.ref("medicine/command/value").get()).value as String;
+      String time = cmdValue.substring(0, 5);
+      int type = int.parse(cmdValue.substring(6));
+      if(cmd == "coming") {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text("Notice"),
+            titleTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+                color: Colors.black
+            ),
+            content: Text(
+              "It's time for medicine\nTime: $time\nType A: ${type & 0x0F}  Type B: ${(type >> 4) & 0x0F}",
+              style: TextStyle(
+                  fontSize: 13.sp
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "OK",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                      color: Colors.blueAccent
+                    ),
+                  )
+              ),
+            ],
+          ),
+        );
+      }
     });
   }
 

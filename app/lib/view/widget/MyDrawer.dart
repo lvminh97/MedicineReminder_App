@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:medicine_reminder/routes.dart';
 import 'package:sizer/sizer.dart';
 
-enum DrawerSelection {home, schedule, time}
+enum DrawerSelection {home, schedule, time, history}
 
 class MyDrawer extends StatelessWidget{
 
@@ -74,6 +74,20 @@ class MyDrawer extends StatelessWidget{
             onTap: () {
               if(_drawerSelection != DrawerSelection.time){
                 Navigator.pushNamedAndRemoveUntil(context, RoutesName.time, (route) => false);
+              }
+              else {
+                Navigator.pop(context);
+              }
+            },
+          ),
+          ListTile(
+            selected: _drawerSelection == DrawerSelection.history,
+            selectedColor: Colors.blueAccent,
+            title: const Text("History"),
+            leading: Icon(Icons.history, size: 20.sp),
+            onTap: () {
+              if(_drawerSelection != DrawerSelection.history){
+                Navigator.pushNamedAndRemoveUntil(context, RoutesName.history, (route) => false);
               }
               else {
                 Navigator.pop(context);

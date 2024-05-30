@@ -2,32 +2,31 @@
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:medicine_reminder/routes.dart';
+import 'package:medicine_reminder/view/widget/HistoryItem.dart';
 import 'package:medicine_reminder/view/widget/MyDrawer.dart';
-import 'package:medicine_reminder/view/widget/ScheduleItem.dart';
 import 'package:sizer/sizer.dart';
 
-class Schedule extends StatefulWidget {
-  const Schedule({super.key});
+class History extends StatefulWidget {
+  const History({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return ScheduleState();
+    return HistoryState();
   }
 
 }
 
-class ScheduleState extends State<StatefulWidget> {
+class HistoryState extends State<StatefulWidget> {
 
-  List<ScheduleItem> scheduleList = [];
-  ValueNotifier<int> scheduleSizeNtf = ValueNotifier(0);
-  late DatabaseReference scheduleSizeRef, scheduleDataRef;
+  List<HistoryItem> historyList = [];
+  ValueNotifier<int> historySizeNtf = ValueNotifier(0);
+  late DatabaseReference historySizeRef, historyDataRef;
   late DatabaseReference cmdRef;
 
   @override
   void initState() {
     super.initState();
-    scheduleListener();
+    historyListener();
     comingListener();
   }
 
@@ -39,7 +38,7 @@ class ScheduleState extends State<StatefulWidget> {
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-            "Schedule list",
+            "History",
             style: TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -47,20 +46,20 @@ class ScheduleState extends State<StatefulWidget> {
         ),
         body: DecoratedBox(
           decoration: const BoxDecoration(
-            color: Colors.white54
+              color: Colors.white54
           ),
           child: Container(
-            margin: EdgeInsets.fromLTRB(5.w, 5.h, 5.w, 10.h),
-            width: 90.w,
-            height: 80.h,
-            alignment: Alignment.center,
-            child: ValueListenableBuilder(
-              valueListenable: scheduleSizeNtf,
-              builder: (context, value, child) => ListView.builder(
-                itemCount: scheduleSizeNtf.value,
-                itemBuilder: (context, index) => scheduleList[index],
-              ),
-            )
+              margin: EdgeInsets.fromLTRB(5.w, 5.h, 5.w, 10.h),
+              width: 90.w,
+              height: 80.h,
+              alignment: Alignment.center,
+              child: ValueListenableBuilder(
+                valueListenable: historySizeNtf,
+                builder: (context, value, child) => ListView.builder(
+                  itemCount: historySizeNtf.value,
+                  itemBuilder: (context, index) => historyList[index],
+                ),
+              )
           ),
         ),
         drawer: MyDrawer(DrawerSelection.schedule),
@@ -68,14 +67,15 @@ class ScheduleState extends State<StatefulWidget> {
           width: 14.w,
           height: 14.w,
           child: TextButton(
-            onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(context, RoutesName.addSchedule, (route) => false);
+            onPressed: () async {
+              await FirebaseDatabase.instance.ref("medicine/history/data").set({});
+              await FirebaseDatabase.instance.ref("medicine/history/size").set(0);
             },
             style: TextButton.styleFrom(
-              backgroundColor: Colors.lightBlueAccent
+                backgroundColor: Colors.red
             ),
             child: const Icon(
-              Icons.add,
+              Icons.delete,
               color: Colors.white,
             ),
           ),
@@ -84,22 +84,22 @@ class ScheduleState extends State<StatefulWidget> {
     );
   }
 
-  void scheduleListener() async {
-    scheduleDataRef = FirebaseDatabase.instance.ref("medicine/schedule/data");
-    scheduleDataRef.onValue.listen((event) async {
-      scheduleList = [];
-      var schData = ((await scheduleDataRef.get()).value ?? []) as List;
-      for(int i = 0; i < schData.length; i++) {
-        var schedule = ScheduleItem(
+  void historyListener() async {
+    historyDataRef = FirebaseDatabase.instance.ref("medicine/history/data");
+    historyDataRef.onValue.listen((event) async {
+      historyList = [];
+      var hisData = ((await historyDataRef.get()).value ?? []) as List;
+      for(int i = 0; i < hisData.length; i++) {
+        var history = HistoryItem(
           id: i,
-          time: schData[i]["time"],
-          typeA: schData[i]["type_a"],
-          typeB: schData[i]["type_b"],
+          time: hisData[i]["time"],
+          typeA: hisData[i]["type_a"],
+          typeB: hisData[i]["type_b"],
           parentContext: context,
         );
-        scheduleList.add(schedule);
+        historyList.add(history);
       }
-      scheduleSizeNtf.value = scheduleList.length;
+      historySizeNtf.value = historyList.length;
     });
   }
 

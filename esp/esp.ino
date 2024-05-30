@@ -32,7 +32,7 @@ struct ScheduleItem {
   uint8_t minute;
   uint8_t type;
 };
-ScheduleItem scheduleList[20];
+ScheduleItem scheduleList[20], tmpSchedule;
 int scheduleSize = 0;
 
 void setup(){
@@ -151,6 +151,29 @@ void getScheduleList() {
   sendCommand(outBuff, 3 * scheduleSize + 2);
 }
 
+void setComingSchedule() {
+  Firebase.RTDB.setString(&fbdo, F("medicine/command/value"), String(tmpSchedule.hour) + F(":") + String(tmpSchedule.minute) + F(":") + String(tmpSchedule.type));
+  delay(50);
+  Firebase.RTDB.setString(&fbdo, F("medicine/command/cmd"), F("coming"));
+}
+
+void setHistory() {
+  Firebase.RTDB.getInt(&fbdo, F("medicine/history/size"));
+  int size = fbdo.to<int>();
+  String timestr = "";
+  if(tmpSchedule.hour < 10)
+    timestr += "0";
+  timestr += String(tmpSchedule.hour) + ":";
+  if(tmpSchedule.minute < 10)
+    timestr += "0";
+  timestr += String(tmpSchedule.minute);
+  Firebase.RTDB.setString(&fbdo, F("medicine/history/data/") + String(size) + F("/time"), timestr);
+  delay(50);
+  Firebase.RTDB.setInt(&fbdo, F("medicine/history/data/") + String(size) + F("/type_a"), tmpSchedule.type & 0x0F);
+  delay(50);
+  Firebase.RTDB.setInt(&fbdo, F("medicine/history/data/") + String(size) + F("/type_b"), (tmpSchedule.type >> 4) & 0x0F);
+}
+
 void getRTC() {
   Firebase.RTDB.getString(&fbdo, F("medicine/command/value"));
   String timestr = fbdo.to<String>();
@@ -234,6 +257,7 @@ void processCommand(){
           
         }
         break;
+
       case 0x82:  // receive the schedule from STM32
         scheduleSize = inBuff[3];
         for(int i = 0; i < scheduleSize; i++) {
@@ -242,6 +266,20 @@ void processCommand(){
           scheduleList[i].type = inBuff[3 * i + 6];
         }
         setScheduleList();
+        break;
+      
+      case 0x83:  // coming schedule
+        tmpSchedule.hour = inBuff[3];
+        tmpSchedule.minute = inBuff[4];
+        tmpSchedule.type = inBuff[5];
+        setComingSchedule();
+        break;
+
+      case 0x84:  // confirmed schedule
+        tmpSchedule.hour = inBuff[3];
+        tmpSchedule.minute = inBuff[4];
+        tmpSchedule.type = inBuff[5];
+        setHistory();
         break;
     }
   }
