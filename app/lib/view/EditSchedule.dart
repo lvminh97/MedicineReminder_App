@@ -20,6 +20,7 @@ class EditSchedule extends StatefulWidget {
 
 class EditScheduleState extends State<StatefulWidget> {
 
+  bool firstLoad = true;
   ValueNotifier<double> typeANtf = ValueNotifier(0), typeBNtf = ValueNotifier(0);
   ValueNotifier<String> timeNtf = ValueNotifier("00:00");
   ScheduleItem? schedule;
@@ -31,11 +32,14 @@ class EditScheduleState extends State<StatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var routeMap = ModalRoute.of(context)!.settings.arguments as Map;
-    schedule = routeMap["schedule"];
-    typeANtf.value = schedule!.typeA * 1.0;
-    typeBNtf.value = schedule!.typeB * 1.0;
-    timeNtf.value = schedule!.time;
+    if(firstLoad) {
+      var routeMap = ModalRoute.of(context)!.settings.arguments as Map;
+      schedule = routeMap["schedule"];
+      typeANtf.value = schedule!.typeA * 1.0;
+      typeBNtf.value = schedule!.typeB * 1.0;
+      timeNtf.value = schedule!.time;
+      firstLoad = false;
+    }
 
     return PopScope(
       canPop: false,
@@ -85,8 +89,8 @@ class EditScheduleState extends State<StatefulWidget> {
                         width: 15.w,
                         height: 15.w,
                         child: TextButton(
-                          onPressed: () {
-                            showTimePicker(
+                          onPressed: () async {
+                            await showTimePicker(
                               context: context,
                               initialTime: TimeOfDay.fromDateTime(DateTime.parse("2024-01-01 ${timeNtf.value}")),
                               initialEntryMode: TimePickerEntryMode.input

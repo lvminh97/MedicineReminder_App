@@ -172,6 +172,8 @@ void setHistory() {
   Firebase.RTDB.setInt(&fbdo, F("medicine/history/data/") + String(size) + F("/type_a"), tmpSchedule.type & 0x0F);
   delay(50);
   Firebase.RTDB.setInt(&fbdo, F("medicine/history/data/") + String(size) + F("/type_b"), (tmpSchedule.type >> 4) & 0x0F);
+  delay(50);
+  Firebase.RTDB.setInt(&fbdo, F("medicine/history/size"), size + 1);
 }
 
 void getRTC() {

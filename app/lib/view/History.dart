@@ -62,7 +62,7 @@ class HistoryState extends State<StatefulWidget> {
               )
           ),
         ),
-        drawer: MyDrawer(DrawerSelection.schedule),
+        drawer: MyDrawer(DrawerSelection.history),
         floatingActionButton: SizedBox(
           width: 14.w,
           height: 14.w,
