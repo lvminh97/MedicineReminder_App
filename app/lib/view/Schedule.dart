@@ -107,11 +107,11 @@ class ScheduleState extends State<StatefulWidget> {
     cmdRef = FirebaseDatabase.instance.ref("medicine/command/cmd");
     cmdRef.onValue.listen((event) async {
       String cmd = event.snapshot.value as String;
-      await cmdRef.set(" ");
-      String cmdValue = (await FirebaseDatabase.instance.ref("medicine/command/value").get()).value as String;
-      String time = cmdValue.substring(0, 5);
-      int type = int.parse(cmdValue.substring(6));
       if(cmd == "coming") {
+        await cmdRef.set(" ");
+        String cmdValue = (await FirebaseDatabase.instance.ref("medicine/command/value").get()).value as String;
+        String time = cmdValue.substring(0, 5);
+        int type = int.parse(cmdValue.substring(6));
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
